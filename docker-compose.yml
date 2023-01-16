@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:14.1-alpine
+    container_name: postgres-0
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tick-toc2
+    env_file:
+      - .env
+  app:
+    image: juneidea/tick-toc-aws:latest
+    container_name: tick-toc
+    ports:
+      - 8080:8080
+    environment:
+      NODE_ENV: prod
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_DATABASE: tick-toc2
+      DB_HOST: database
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - database
